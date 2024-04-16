@@ -18,7 +18,7 @@ void compileExecute(void){
     // Check if a file is currently open
     if (currentFile[0] == '\0') {
         printf("No file is currently open in the IDE.\n");
-        return 1;
+        exit;
     }
 
     // Construct the command to compile the C program
@@ -27,7 +27,7 @@ void compileExecute(void){
     // Execute the compilation command
     if (system(command) != 0) {
         printf("Compilation failed.\n");
-        return 1;
+        exit;
     }
 
     // Construct the command to run the compiled program
@@ -36,7 +36,7 @@ void compileExecute(void){
     // Execute the run command
     if (system(command) != 0) {
         printf("Program execution failed.\n");
-        return 1;
+        exit;
     }
 }
 
