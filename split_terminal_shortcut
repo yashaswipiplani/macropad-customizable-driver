@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <X11/Xlib.h>
+#include <X11/keysym.h>
+#include <X11/extensions/XTest.h>
+
+void execute_keyboard_shortcut() {
+    // Open the display
+    Display *display = XOpenDisplay(NULL);
+    if (!display) {
+        fprintf(stderr, "Unable to open display\n");
+        exit(1);
+    }
+
+    // Send the key events for Ctrl+Shift+5
+    XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Control_L), True, 0);
+    XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Shift_L), True, 0);
+    XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_5), True, 0);
+    XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_5), False, 0);
+    XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Shift_L), False, 0);
+    XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Control_L), False, 0);
+
+    // Flush the event queue and synchronize
+    XFlush(display);
+    XSync(display, True);
+
+    // Close the display
+    XCloseDisplay(display);
+}
+
+int main() {
+    // Print a message before executing the shortcut
+    printf("Executing Ctrl+Shift+5 keyboard shortcut...\n");
+    
+    // Execute Ctrl+Shift+5 keyboard shortcut without xdotool
+    execute_keyboard_shortcut();
+
+    // Print a message after executing the shortcut
+    printf("Ctrl+Shift+5 keyboard shortcut executed.\n");
+    
+    return 0;
+}
