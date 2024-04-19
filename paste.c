@@ -1,4 +1,4 @@
-void paste (int argc, char *argv[])
+void paste ()
 {
     system("xclip -o >abc.text");
 }
