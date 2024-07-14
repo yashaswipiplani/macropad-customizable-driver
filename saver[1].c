@@ -1,7 +1,9 @@
+// call saveOnActiveWindow(); to use this functionlity
 #include <stdio.h>
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include "macropad.h"
 
 Display *display;
 
@@ -39,12 +41,11 @@ void sendSaveSignal(Window window) {
 }
 
 
-int main(){
+void saveOnActiveWindow(void){
 
     display = XOpenDisplay(NULL);
     if (!display) {
         fprintf(stderr, "Failed to open X display\n");
-        return 1;
     }
 
     Window focusedWindow;
@@ -60,12 +61,11 @@ int main(){
 
     if (focusedWindow == None) {
         fprintf(stderr, "No focused window found\n");
-        return 1;
     }
 
     // Simulate "Save" signal
     sendSaveSignal(focusedWindow);
 
     XCloseDisplay(display);
-    return 0;
+    
 }

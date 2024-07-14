@@ -2,63 +2,47 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include "macropad.h"
 
 #define MAX_COMMAND_LENGTH 1024
 #define MAX_FILENAME_LENGTH 256
 
-char currentFile[MAX_FILENAME_LENGTH];
+// Actually compiles and executes the file
+void compileExecute(const char *filename) {
+    char compileCommand[MAX_COMMAND_LENGTH];
+    char runCommand[MAX_COMMAND_LENGTH];
 
-void getCurrentFile();
-
-void compileExecute(void){
-    char command[MAX_COMMAND_LENGTH];
-    // Get the current file name from the IDE
-    getCurrentFile();
-
-    // Check if a file is currently open
-    if (currentFile[0] == '\0') {
-        printf("No file is currently open in the IDE.\n");
-        exit;
+    // Check if filename is valid
+    if (filename == NULL || filename[0] == '\0') {
+        printf("No filename provided.\n");
+        exit(1);
     }
 
     // Construct the command to compile the C program
-    sprintf(command, "gcc -o %s.out %s", currentFile, currentFile);
+    sprintf(compileCommand, "gcc -o %s.out %s", filename, filename);
 
     // Execute the compilation command
-    if (system(command) != 0) {
+    if (system(compileCommand) != 0) {
         printf("Compilation failed.\n");
-        exit;
+        exit(1);
     }
 
     // Construct the command to run the compiled program
-    sprintf(command, "./%s.out", currentFile);
+    sprintf(runCommand, "./%s.out", filename);
 
     // Execute the run command
-    if (system(command) != 0) {
+    if (system(runCommand) != 0) {
         printf("Program execution failed.\n");
-        exit;
+        exit(1);
     }
 }
 
-// Function to get the current file name from the IDE
-void getCurrentFile() {
-    // Assuming you're using Visual Studio Code, you can use the `code` command
-    // to get the current file name from the terminal
-    FILE* pipe = popen("code --file-info", "r");
-    if (pipe == NULL) {
-        fprintf(stderr, "Failed to run 'code --file-info'\n");
-        return;
+// Main function needed as the filename is taken as a command line argument when this file is run by call_for_compile_execute
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: %s <filename>\n", argv[0]);
+        exit(1);
     }
-
-    char buffer[MAX_FILENAME_LENGTH];
-    fgets(buffer, MAX_FILENAME_LENGTH, pipe);
-    pclose(pipe);
-
-    // Extract the file name from the output
-    char* token = strtok(buffer, " ");
-    if (token != NULL) {
-        strcpy(currentFile, token);
-    } else {
-        currentFile[0] = '\0';
-    }
+    compileExecute(argv[1]);
+    return 0;
 }
